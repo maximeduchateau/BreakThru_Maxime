@@ -1,16 +1,21 @@
 public class Board {
+    public static final int BOARD_DIM = 11;
     private Ship[][] board;
     private Boolean teamWon;
 
 
     public Board() {
-        this.board = new Ship[11][11];
+        this.board = new Ship[BOARD_DIM][BOARD_DIM];
         this.teamWon = null;
     }
 
-    public Ship[][] getGameBoard() {
-        return this.board;
+    public Ship getPosition(int posX, int posY) {
+        return board[posX][posY];
     }
+    public void setPosition(int posX, int posY, Ship ship) {
+        board[posX][posY]=ship;
+    }
+    public Boolean getTeamWon(){return teamWon;}
 
     public void initialize() {
         // initialize silver ships
@@ -54,21 +59,39 @@ public class Board {
         board[5][5] = new FlagShip(true);
     }
 
-    public Boolean setTeamWon() {
-        return teamWon;
-    }
-
-    public void setTeamWon(Boolean updateWinner) {
-        this.teamWon = updateWinner;
-    }
-
     public void move(int srcX, int srcY, int dstX, int dstY) {
-        if (board[dstX][dstY] instanceof FlagShip) {
-            teamWon = board[srcX][srcY].getTeam();
-        }
+
         board[dstX][dstY] = board[srcX][srcY];
         board[srcX][srcY] = null;
+        if (silverWinningCondition()||goldWinningCondition()){
+            teamWon=board[srcX][srcY].getTeam();
+        }
     }
-}
+        public Boolean silverWinningCondition(){
+        for (int i=0;i<BOARD_DIM;++i){
+            for(int j=0;j<BOARD_DIM;++j){
+                if(board[i][j]!=null && board[i][j] instanceof FlagShip){
+                    return false;
+                }
+            }
+        }return true;
+        }
+       //just to test ai todo: wissen
+        public int evaluate(){return 20;}
 
 
+    public Boolean goldWinningCondition(){
+        for(int i=0;i<BOARD_DIM;i++) {
+            if (board[i][BOARD_DIM - 1] != null && board[i][BOARD_DIM - 1] instanceof FlagShip) {
+                return true;
+            }
+            if (board[i][0] != null && board[i][0] instanceof FlagShip) {
+                return true;
+            }
+            if (board[BOARD_DIM - 1][i] != null && board[BOARD_DIM - 1][i] instanceof FlagShip) {
+                return true;
+            }
+            if (board[0][i] != null && board[0][i] instanceof FlagShip) {
+                return true;
+            }
+        } {return false;}}}

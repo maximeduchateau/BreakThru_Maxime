@@ -1,18 +1,17 @@
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class AI extends Observer {
-        private Board board;
-        private Game game;
-        static Scanner scan = new Scanner(System.in);
-        private Boolean team;
+public class AIIterative extends Observer {
+    private Board board;
+    private Game game;
+    static Scanner scan = new Scanner(System.in);
+    private Boolean team;
+    private Move theMove;
 
-        public AI(Game game) {
-            this.board = game.getBoard();
-            this.game = game;
-        }
-    public void setTeam(Boolean team){
-        this.team= team;
+    public AIIterative(Game game) {
+        this.board = game.getBoard();
+        this.game = game;
     }
 
 /*
@@ -48,22 +47,22 @@ public class AI extends Observer {
              */
 
 
-        public void update() {
-            super.update();
-        }
+    public void update() {
+        super.update();
+    }
 
-    public Boolean gameTree(Board board, boolean team){
+    public int gameTree(Board board, boolean team){
 
         if(board.goldWinningCondition()) {
-            return board.getTeamWon();
+            return 10000;
         }
 
         if(board.silverWinningCondition()) {
-            return board.getTeamWon();
-        }
+            return -10000;}
 
         // Find ships of the current player
-        boolean bestResult = true;
+        int bestResult = -1000;
+        int result;
         for(int i = 0; i < board.BOARD_DIM; ++i) {
             for(int j = 0; j < board.BOARD_DIM; ++j) {
 
@@ -82,8 +81,9 @@ public class AI extends Observer {
                         board.setPosition(i, j,null);//todo: gaat dit wel werken?
 
                         // Recursive call
-                        bestResult = gameTree(board, !team);
-
+                        result = gameTree(board, !team);
+                                    if (result>bestResult){bestResult=result;
+                                    theMove=move;}
                         // Undo move
                         board.setPosition(i, j,srcShip);
                         board.setPosition(move.getDstX(), move.getDstY(),dstShip);
