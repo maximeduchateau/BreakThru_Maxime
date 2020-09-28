@@ -12,21 +12,7 @@ public class Move {
         this.dstY=dstY;
         this.weight=weight;
     }
-    public void setSrcX(int srcX){
-        this.srcX= srcX;
-    }
-    public void setSrcY(int srcY){
-        this.srcY= srcY;
-    }
-    public void setDstX(int dstX){
-        this.dstX= dstX;
-    }
-    public void setDstY(int dstY) {
-        this.dstY = dstY;
-    }
-    public void setWeight(int weight){
-        this.weight= weight;
-    }
+
     public int getSrcX(){
         return srcX;
     }

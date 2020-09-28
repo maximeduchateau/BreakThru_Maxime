@@ -52,9 +52,11 @@ public class AI extends Observer {
     public void update() {
         super.update();
         if (game.getOnTurn()==team){
-            ArrayList<Move> path = (ArrayList<Move>) board.gameTree_2(board,team,1,-10000,10000).get(1);
+            ArrayList<Move> path = (ArrayList<Move>) board.gameTree_2(board,team,2,Integer.MIN_VALUE,Integer.MAX_VALUE).getPath();
             Move move=path.get(0);
+            System.out.println(path.toString());
             game.processMove(move.getSrcX(),move.getSrcY(),move.getDstX(),move.getDstY());
+            board.printBoard(board);
         }
     }
 

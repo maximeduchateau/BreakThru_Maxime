@@ -13,7 +13,7 @@ public class Game extends Subject {
     public void start() {
         board.initialize();
         onTurn = true;
-       // board.gameTree_2(board,false,0,-10000,10000);
+       // board.gameTree_2(board,false,1,-10000,10000);
         notifyObservers();
     }
 
@@ -40,19 +40,23 @@ public class Game extends Subject {
         Boolean validMove = true;
         int moveEvaluation;
         if (srcX<0||srcX>board.BOARD_DIM-1||srcY<0||srcY>board.BOARD_DIM-1||dstX<0||dstX>board.BOARD_DIM-1||dstY<0||dstY>board.BOARD_DIM-1){
-            System.out.println("something went wrong here, in is validmove");
+            System.out.println("something went wrong here, in is validmove: OUT OF BOUNDS");
             return false;
         }
         if (board.getPosition(srcX, srcY) == null ||
                 board.getPosition(srcX, srcY).getTeam() != onTurn ||
                 srcX == dstX && srcY == dstY){
+            System.out.println("somehting went wrong here");
             validMove=false;
         }
         if (validMove) {
-            if (board.getPosition(dstX, dstY) != null && numberOfMovesForTurn == 0) {
+            //if (board.getPosition(dstX, dstY) != null && numberOfMovesForTurn == 0) {
+            if (board.getPosition(dstX, dstY) != null) {
                 moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, dstX, dstY, board);
+                System.out.println("a capture evaluation took place");
             } else {
                 moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, dstX, dstY, board);
+                System.out.println("a move evaluation took place");
             }
             numberOfMovesForTurn += moveEvaluation;
             if (moveEvaluation == -1) {
