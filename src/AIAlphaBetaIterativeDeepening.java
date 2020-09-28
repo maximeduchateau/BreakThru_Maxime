@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Iterate extends Observer {
+public class AIAlphaBetaIterativeDeepening extends Observer {
     private Board board;
     private Game game;
     static Scanner scan = new Scanner(System.in);
@@ -16,7 +16,7 @@ public class Iterate extends Observer {
     private long start;
     private boolean timeout;
 
-    public Iterate (Game game) {
+    public AIAlphaBetaIterativeDeepening(Game game) {
         this.board = game.getBoard();
         this.game = game;
     }
@@ -43,6 +43,20 @@ public class Iterate extends Observer {
         }
     }
 
+    static int evaluate(Boolean team, Board board){
+        int boardRating=0;
+        for (int i=0;i<board.BOARD_DIM;++i){
+            for (int j=0; j<board.BOARD_DIM;++i){
+             Ship ship = board.getPosition(i,j);
+                if (ship==null){continue;
+                }
+                if(ship.getTeam()==team){
+                    boardRating+=ship.value();
+                }
+                else {boardRating-=ship.value();
+            }
+        }}
+        return boardRating;}
 
 
     public void update() {
@@ -52,10 +66,10 @@ public class Iterate extends Observer {
     public int gameTree(Board board, int depth, boolean team, int alpha, int beta){
 
         if(board.goldWinningCondition()) {
-            return 10000;
+            return 1000;
         }
         if(board.silverWinningCondition()) {
-            return -10000;
+            return -1000;
         }
         if (System.currentTimeMillis() - start > TIMEOUT_MILLISECONDS)
         {
@@ -63,7 +77,7 @@ public class Iterate extends Observer {
             return alpha;
         }
         if (depth == 0) {
-            return board.evaluate();
+            return evaluate(this.team,board);
         }
         // Find ships of the current player
         int bestResult = -1000;
@@ -105,35 +119,3 @@ public class Iterate extends Observer {
         }
 
         return bestResult;}}
-
-/*
-        private void genNextMove(){
-            ArrayList<Move>allPossibleMovesPlayer= new ArrayList<>();
-            ArrayList<Move>allPossibleFinalMovesPlayer= new ArrayList<>();
-
-            for (int i=0; i<board.BOARD_DIM;++i){
-                for (int j=0; j<board.BOARD_DIM;++j){
-                    if(board.getPosition(i,j)!=null && board.getPosition(i,j).getTeam()==team){
-                        allPossibleMovesPlayer.addAll(board.getPosition(i,j).generatePossibleMoves(board,i,j));
-                    }
-                }
-            }
-
- */
-            /*
-            for (Move m: allPossibleMovesPlayer){
-                for (Move n: allPossibleMovesPlayer){
-                    if(m.getWeigt()==2){allPossibleFinalMovesPlayer.add(m);
-                    continue;}
-                    if (m.getDstX()==n.getDstX()&&m.getDstY()==n.getDstY()){
-                        continue;
-                    }
-                    if (m.getSrcX()==n.getSrcX()&&m.getSrcY()==n.getSrcY()){
-                        continue;}
-                    if (m.getWeigt()+n.getWeigt()== game.MAX_WEIGHT_FOR_TURN){
-                        allPossibleFinalMovesPlayer.add();
-                    }
-                    }
-                }
-
-             */

@@ -30,5 +30,7 @@ public class FlagShip extends Ship {
             return -1;
         }
     }
-
+public int value(){
+        return 300;
+}
 }

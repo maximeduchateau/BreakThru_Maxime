@@ -13,6 +13,7 @@ public class Game extends Subject {
     public void start() {
         board.initialize();
         onTurn = true;
+       // board.gameTree_2(board,false,0,-10000,10000);
         notifyObservers();
     }
 
@@ -28,13 +29,10 @@ public class Game extends Subject {
 
         if (isValidMove(srcX, srcY, dstX, dstY)) {
             board.move(srcX, srcY, dstX, dstY);
-            System.out.println("validmovewasplayed");
             if (board.getTeamWon()!=null){
                 System.out.println("GAME OVER, winner is"+ board.getTeamWon().toString());
         }}
-        else{
-            System.out.println("not validmove");}
-        switchSidesIfNecessary();
+        //switchSidesIfNecessary();
         notifyObservers();
     }
 
@@ -42,13 +40,12 @@ public class Game extends Subject {
         Boolean validMove = true;
         int moveEvaluation;
         if (srcX<0||srcX>board.BOARD_DIM-1||srcY<0||srcY>board.BOARD_DIM-1||dstX<0||dstX>board.BOARD_DIM-1||dstY<0||dstY>board.BOARD_DIM-1){
-            System.out.println("out of bounds");
+            System.out.println("something went wrong here, in is validmove");
             return false;
         }
         if (board.getPosition(srcX, srcY) == null ||
                 board.getPosition(srcX, srcY).getTeam() != onTurn ||
                 srcX == dstX && srcY == dstY){
-            System.out.println("something went wrong here");
             validMove=false;
         }
         if (validMove) {
@@ -59,10 +56,11 @@ public class Game extends Subject {
             }
             numberOfMovesForTurn += moveEvaluation;
             if (moveEvaluation == -1) {
-                System.out.println("mistake in the shipclasses");
                 validMove = false;
+                System.out.println("after going trough the ships validation function the valid move status is "+ validMove);
             }
-            switchSidesIfNecessary();
+           // switchSidesIfNecessary();
+            onTurn=!onTurn;
             }
 
         return validMove;

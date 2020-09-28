@@ -46,5 +46,16 @@ public class Move {
     public int getWeigt() {
         return weight;
     }
+
+    @Override
+    public String toString() {
+        return "Move{" +
+                "srcX=" + srcX +
+                ", srcY=" + srcY +
+                ", dstX=" + dstX +
+                ", dstY=" + dstY +
+                ", weight=" + weight +
+                '}';
+    }
 }
 

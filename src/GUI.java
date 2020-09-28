@@ -23,7 +23,8 @@ public class GUI extends Observer {
         Boolean onTurn = game.getOnTurn();
         System.out.println("you are the " + getTeam()+ " player");
         System.out.println("player on turn" + onTurn);
-        requestMove();
+        if (game.getOnTurn()==team){
+        requestMove();}
     }
 
     public void printBoard(Board board) {
@@ -31,9 +32,9 @@ public class GUI extends Observer {
         System.out.println("+-+-+-+-+-+-+-+-+-+-+-+-+");
         int row, column;
         for (row = 0; row < Board.BOARD_DIM; row++) {
-            if (row<9) {System.out.print(" " + (row+1) +"|");}
+            if (row<2) {System.out.print((11-row) +"|");}
             else {
-                System.out.print(row+1 +"|");}
+                System.out.print(" "+ (11-row) +"|");}
             for (column = 0; column < Board.BOARD_DIM; column++) {
                 //if there is no boat: empty position is printed
                 if (board.getPosition(row, column) == null) {
@@ -58,6 +59,8 @@ public class GUI extends Observer {
         String dstCoordinates=scan.nextLine();
         int dstX = xCoordinate(dstCoordinates);
         int dstY = yCoordinate(dstCoordinates);
+
+
         game.processMove(srcX, srcY, dstX, dstY);
 
 

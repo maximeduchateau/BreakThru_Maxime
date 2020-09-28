@@ -108,7 +108,6 @@ public class Ship {
 
     }
 
-
     @Override
     public String toString() {
         if (team) {
@@ -136,6 +135,11 @@ public class Ship {
             }
         }
         return possibleMoves;
+    }
+
+    public int value(){
+        if (this.team==true){return 30;}
+        else {return 20;}
     }
 }
 
