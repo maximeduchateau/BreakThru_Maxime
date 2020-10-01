@@ -91,24 +91,19 @@ public class Ship {
 
         //also not valid if either x or y value remains constant (must be diagonally)
         if (srcX == dstX && srcY != dstY || srcX != dstX && srcY == dstY) {
-            System.out.println("not diagonal move: hier gebeurt foutje");
             validCapture = false;
         }
         //capture is only valid if destination is adjacent position
         if ((Math.abs(srcX - dstX)) != 1 || Math.abs(srcY - dstY) != 1) {
-            System.out.println("fout gebeurt bij die absolutes");
             validCapture = false;
         }
         if (board.getPosition(dstX, dstY).getTeam() == board.getPosition(srcX, srcY).getTeam()) {
-            System.out.println("Fout heeft met de teams te maken hier");
             validCapture = false;
         }
         if (validCapture) {
-            System.out.println("zijn tot hier valid capture geevalueerd en 2 wordt gereturnd");
             return 2;
 
         } else {
-            System.out.println("min 1 wordt gereturnd");
             return -1;
         }
 
@@ -123,13 +118,13 @@ public class Ship {
         }
     }
 
-    public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY) {
+    public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY, int maxWeight) {
         ArrayList<Move> possibleMoves = new ArrayList<>();
         int moveEvaluation;
         for (int i = 0; i < board.BOARD_DIM; ++i) {
             for (int j = 0; j < board.BOARD_DIM; ++j) {
                 if (!(srcX == i && srcY == j)) {
-                    if (board.getPosition(i, j) != null) {
+                    if (board.getPosition(i, j) != null && maxWeight==2) {
                         moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, i, j, board);
                     } else {
                         moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, i, j, board);

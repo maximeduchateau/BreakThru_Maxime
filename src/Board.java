@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Board {
     public static final int BOARD_DIM = 11;
     private Ship[][] board;
     private Boolean teamWon;
+    public static final int MAX_WEIGHT_PER_TURN = 2;
 
 
     public Board() {
@@ -75,7 +75,7 @@ public class Board {
         System.out.println("old source position is empty");
         if (silverWinningCondition() || goldWinningCondition()) {
             System.out.println("!!!!!!!GAME OVER!!!!!!!!");
-           // teamWon = board[dstX][dstY].getTeam();
+            // teamWon = board[dstX][dstY].getTeam();
         }
     }
 
@@ -116,75 +116,6 @@ public class Board {
         return "Board{" +
                 "board=" + Arrays.toString(board) +
                 '}';
-    }
-
-    public int gameTree(Board board, boolean team, int depth, int alpha, int beta) {
-        printBoard(board);
-        if (depth <= 0) {
-            System.out.println("board evaluation score equals " + evaluate(board) + " at depth " + depth);
-            return evaluate(board);
-        }
-
-        if (board.goldWinningCondition()) {
-            return Integer.MAX_VALUE;
-        }
-
-        if (board.silverWinningCondition()) {
-            return Integer.MIN_VALUE;
-        }
-
-        // Find ships of the current player
-        Move bestMove;
-        int bestResult = team ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        System.out.println(bestResult);
-        for (int i = 0; i < board.BOARD_DIM; ++i) {
-            for (int j = 0; j < board.BOARD_DIM; ++j) {
-                System.out.println(i + "" + j);
-                Ship srcShip = board.getPosition(i, j);
-
-                // Verify that ship is owned by current player
-                if (srcShip != null && srcShip.getTeam() == team) {
-
-                    // Consider all possible moves of the current ship
-                    for (Move move : srcShip.generatePossibleMoves(board, i, j)) {
-
-                        Ship dstShip = board.getPosition(move.getDstX(), move.getDstY());
-
-                        // Perform move
-                        board.setPosition(move.getDstX(), move.getDstY(), srcShip);
-                        board.setPosition(i, j, null);//todo: gaat dit wel werken?
-
-                        // Recursive call
-                        int eval = gameTree(board, !team, depth - 1, alpha, beta);
-
-                        if (team) {
-                            alpha = Math.max(alpha, eval);
-                            System.out.println("team " + team + " alpha " + alpha + " eval " + eval + "beta " + beta);
-                        } else {
-                            beta = Math.min(beta, eval);
-                        }
-                        /*if (beta <= alpha) {
-                            System.out.println("BETA <=ALPHA ");
-                            //if beta<=alpha we want to break but we first undo move!
-                            board.setPosition(i, j, srcShip);
-                            board.setPosition(move.getDstX(), move.getDstY(), dstShip);
-                            break;}
-
-                         */
-
-                        bestResult = team ? Math.max(eval, bestResult) : Math.min(eval, bestResult);
-                        if (eval == bestResult) {
-                            bestMove = move;
-                        }
-                        // Undo move
-                        board.setPosition(i, j, srcShip);
-                        board.setPosition(move.getDstX(), move.getDstY(), dstShip);
-                    }
-                }
-            }
-        }
-
-        return bestResult;
     }
 
     public void printBoard(Board board) {
@@ -230,7 +161,14 @@ public class Board {
         return boardRating;
     }
 
-    public Pair gameTree_2(Board board, boolean team, int depth, int alpha, int beta) {
+    public Pair gameTree_2(Board board, boolean team, int depth, int alpha, int beta, int currentWeight, Move lastMove) {
+        if (currentWeight == MAX_WEIGHT_PER_TURN) {
+            team = !team;
+            depth -= 1;
+            currentWeight = 0;
+            lastMove = null;
+        }
+
         if (depth <= 0) {
             System.out.println("board evaluation score equals " + evaluate(board) + " at depth " + depth);
             //return new Pair(evaluate(board), new ArrayList<>());
@@ -256,19 +194,26 @@ public class Board {
             for (int j = 0; j < board.BOARD_DIM && alpha < beta; ++j) {
                 Ship srcShip = board.getPosition(i, j);
 
+                //skip if current ship was moved in previous iteration
+                if (lastMove != null && i == lastMove.getDstX() && j == lastMove.getDstY()) {
+                    continue;
+                }
+
                 // Verify that ship is owned by current player
                 if (srcShip != null && srcShip.getTeam() == team) {
 
                     // Consider all possible moves of the current ship
-                    for (Move move : srcShip.generatePossibleMoves(board, i, j)) {
+                    for (Move move : srcShip.generatePossibleMoves(board, i, j, MAX_WEIGHT_PER_TURN - currentWeight)) {
 
                         Ship dstShip = board.getPosition(move.getDstX(), move.getDstY());
 
                         // Perform move
                         board.setPosition(move.getDstX(), move.getDstY(), srcShip);
                         board.setPosition(i, j, null);
+
                         // Recursive call
-                        Pair gameTree = gameTree_2(board, !team, depth - 1, alpha, beta);
+                        Pair gameTree = gameTree_2(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move);
+
                         if (team && gameTree.getValue() >= optimal.getValue() || !team && gameTree.getValue() <= optimal.getValue()) {
                             bestMove = move;
                             System.out.println(move.toString());
@@ -298,7 +243,7 @@ public class Board {
 
 
         System.out.println("the returned list consists of best Result: " + optimal.getValue() + "and the follwoing path" + optimal.getPath().toString());
-        optimal.getPath().add(0,bestMove);
+        optimal.getPath().add(0, bestMove);
         return (optimal);
     }
 }

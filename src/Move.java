@@ -29,7 +29,7 @@ public class Move {
         return dstY;
     }
 
-    public int getWeigt() {
+    public int getWeight() {
         return weight;
     }
 

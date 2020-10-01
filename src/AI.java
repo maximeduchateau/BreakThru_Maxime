@@ -52,59 +52,17 @@ public class AI extends Observer {
     public void update() {
         super.update();
         if (game.getOnTurn()==team){
-            ArrayList<Move> path = (ArrayList<Move>) board.gameTree_2(board,team,2,Integer.MIN_VALUE,Integer.MAX_VALUE).getPath();
+            ArrayList<Move> path = (ArrayList<Move>) board.gameTree_2(board,team,1,Integer.MIN_VALUE,Integer.MAX_VALUE,0,null).getPath();
             Move move=path.get(0);
             System.out.println(path.toString());
             game.processMove(move.getSrcX(),move.getSrcY(),move.getDstX(),move.getDstY());
+            if (move.getWeight()!=2){
+                Move secondMove=path.get(1);
+                game.processMove(secondMove.getSrcX(),secondMove.getSrcY(),secondMove.getDstX(),secondMove.getDstY());
+        }
             board.printBoard(board);
         }
-    }
-
-    /*public Boolean gameTree(Board board, boolean team) {
-
-        if (board.goldWinningCondition()) {
-            return board.getTeamWon();
-        }
-
-        if (board.silverWinningCondition()) {
-            return board.getTeamWon();
-        }
-
-        // Find ships of the current player
-        boolean bestResult = true;
-        for (int i = 0; i < board.BOARD_DIM; ++i) {
-            for (int j = 0; j < board.BOARD_DIM; ++j) {
-
-                Ship srcShip = board.getPosition(i, j);
-
-                // Verify that ship is owned by current player
-                if (srcShip != null && srcShip.getTeam() == team) {
-
-                    // Consider all possible moves of the current ship
-                    for (Move move : srcShip.generatePossibleMoves(board, i, j)) {
-
-                        Ship dstShip = board.getPosition(move.getDstX(), move.getDstY());
-
-                        // Perform move
-                        board.setPosition(move.getDstX(), move.getDstY(), srcShip);
-                        board.setPosition(i, j, null);//todo: gaat dit wel werken?
-
-                        // Recursive call
-                        bestResult = gameTree(board, !team);
-
-                        // Undo move
-                        board.setPosition(i, j, srcShip);
-                        board.setPosition(move.getDstX(), move.getDstY(), dstShip);
-                    }
-                }
-            }
-        }
-
-        return bestResult;
-    }
-
-     */
-}
+    }}
 
 //todo:  DefensiveStrategy
 //    // IF gold: check if flagship is under threat: a silver piece on adjacent diagonal posiion
