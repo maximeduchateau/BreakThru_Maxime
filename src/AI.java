@@ -6,11 +6,13 @@ public class AI extends Observer {
     private Game game;
     static Scanner scan = new Scanner(System.in);
     private Boolean team;
+    private int depth=2;
 
     public AI(Game game) {
         this.board = game.getBoard();
         this.game = game;
     }
+
 
     public void setTeam(Boolean team) {
         this.team = team;
@@ -49,20 +51,30 @@ public class AI extends Observer {
              */
 
 
-    public void update() {
-        super.update();
-        if (game.getOnTurn()==team){
-            ArrayList<Move> path = (ArrayList<Move>) board.gameTree_2(board,team,1,Integer.MIN_VALUE,Integer.MAX_VALUE,0,null).getPath();
-            Move move=path.get(0);
-            System.out.println(path.toString());
-            game.processMove(move.getSrcX(),move.getSrcY(),move.getDstX(),move.getDstY());
-            if (move.getWeight()!=2){
-                Move secondMove=path.get(1);
-                game.processMove(secondMove.getSrcX(),secondMove.getSrcY(),secondMove.getDstX(),secondMove.getDstY());
+    public void update(UpdateType updateType) {
+        if (updateType == UpdateType.PLAYER_UPDATE) {
+            if (game.getOnTurn() == team) {
+                ArrayList<PairTuple> path = (ArrayList<PairTuple>) board.gameTree_2(board, team, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null).getPath();
+                System.out.println(path);
+                int i = 0;
+                while (i<path.size()) {
+
+                    PairTuple move = path.get(i);
+                    System.out.println("move first "+move);
+                    if (move.getDepth() != this.depth) {
+                        System.out.println("move+ "+ move);
+                        break;
+                    }
+                    System.out.println(path.toString());
+                    game.processMove(move.getMove().getSrcX(), move.getMove().getSrcY(), move.getMove().getDstX(), move.getMove().getDstY());
+                    ++i;
+                    board.printBoard(board);
+                }
+
+            }
         }
-            board.printBoard(board);
-        }
-    }}
+    }
+}
 
 //todo:  DefensiveStrategy
 //    // IF gold: check if flagship is under threat: a silver piece on adjacent diagonal posiion

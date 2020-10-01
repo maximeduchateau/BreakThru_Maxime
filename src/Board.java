@@ -1,3 +1,5 @@
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -142,6 +144,14 @@ public class Board {
         System.out.println("  +a+b+c+d+e+f+g+h+i+j+k+");
 
     }
+    public static void main(String[] args) {
+        Board board= new Board();
+        board.initialize();
+
+        Pair output=board.gameTree_2(board, true, 2, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null);
+        System.out.println(output.getPath());
+    }
+
 
     static int evaluate(Board board) {
         int boardRating = 0;
@@ -162,6 +172,7 @@ public class Board {
     }
 
     public Pair gameTree_2(Board board, boolean team, int depth, int alpha, int beta, int currentWeight, Move lastMove) {
+        System.out.println(" team: " + team + " depth: " + depth + " alpha: " + alpha + " beta: " + beta + " current weight: " + currentWeight);
         if (currentWeight == MAX_WEIGHT_PER_TURN) {
             team = !team;
             depth -= 1;
@@ -170,7 +181,7 @@ public class Board {
         }
 
         if (depth <= 0) {
-            System.out.println("board evaluation score equals " + evaluate(board) + " at depth " + depth);
+            //System.out.println("board evaluation score equals " + evaluate(board) + " at depth " + depth);
             //return new Pair(evaluate(board), new ArrayList<>());
             return new Pair(0, new ArrayList<>());
         }
@@ -188,7 +199,7 @@ public class Board {
         // Find ships of the current player
         ArrayList<Move> path = new ArrayList<>();
         Pair optimal = new Pair(team ? Integer.MIN_VALUE : Integer.MAX_VALUE, null);
-        Move bestMove = null;
+        PairTuple bestMove = null;
 
         for (int i = 0; i < board.BOARD_DIM && alpha < beta; ++i) {
             for (int j = 0; j < board.BOARD_DIM && alpha < beta; ++j) {
@@ -204,7 +215,9 @@ public class Board {
 
                     // Consider all possible moves of the current ship
                     for (Move move : srcShip.generatePossibleMoves(board, i, j, MAX_WEIGHT_PER_TURN - currentWeight)) {
-
+                        if (move.getWeight() + currentWeight > MAX_WEIGHT_PER_TURN) {
+                            continue;
+                        }
                         Ship dstShip = board.getPosition(move.getDstX(), move.getDstY());
 
                         // Perform move
@@ -215,10 +228,8 @@ public class Board {
                         Pair gameTree = gameTree_2(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move);
 
                         if (team && gameTree.getValue() >= optimal.getValue() || !team && gameTree.getValue() <= optimal.getValue()) {
-                            bestMove = move;
-                            System.out.println(move.toString());
+                            bestMove = new PairTuple(move, depth);
                             optimal = gameTree;
-                            System.out.println(path);
                         }
                         // Undo move
                         board.setPosition(i, j, srcShip);
@@ -226,13 +237,12 @@ public class Board {
 
                         if (team) {
                             alpha = Math.max(alpha, gameTree.getValue());
-                            System.out.println("team " + team + " alpha " + alpha + " eval " + gameTree.getValue() + "beta " + beta);
+                            //System.out.println("team " + team + " alpha " + alpha + " eval " + gameTree.getValue() + "beta " + beta);
                         } else {
                             beta = Math.min(beta, gameTree.getValue());
                         }
 
                         if (beta <= alpha) {
-                            System.out.println("BETA <=ALPHA ");
                             break;
                         }
                     }
@@ -241,8 +251,6 @@ public class Board {
             }
         }
 
-
-        System.out.println("the returned list consists of best Result: " + optimal.getValue() + "and the follwoing path" + optimal.getPath().toString());
         optimal.getPath().add(0, bestMove);
         return (optimal);
     }

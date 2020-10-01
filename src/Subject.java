@@ -11,9 +11,9 @@ public class Subject {
         this.observers.add(observer);
     }
 
-    public void notifyObservers() {
+    public void notifyObservers(UpdateType updateType) {
         for (Observer obs : observers) {
-            obs.update();
+            obs.update(updateType);
         }
     }
 }

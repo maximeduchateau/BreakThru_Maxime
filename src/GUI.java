@@ -16,10 +16,8 @@ public class GUI extends Observer {
     public Boolean getTeam(){
         return team;
     }
-    @Override
-    public void update() {
-        super.update();
-        printBoard(board);
+    public void update(UpdateType updateType) {
+       printBoard(board);
         Boolean onTurn = game.getOnTurn();
         System.out.println("you are the " + getTeam()+ " player");
         System.out.println("player on turn" + onTurn);
