@@ -1,6 +1,4 @@
-import jdk.swing.interop.SwingInterOpUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
@@ -91,6 +89,19 @@ public class Board {
         }
         return true;
     }
+//    public Boolean draw() {
+//        int counter=0;
+//        for (int i = 0; i < BOARD_DIM; ++i) {
+//            for (int j = 0; j < BOARD_DIM; ++j) {
+//                if (board[i][j] != null && board[i][j].getTeam()) {
+//                    ++counter;
+//                    if (counter>1){
+//                        return false;}
+//                }
+//            }
+//        }
+//        return true;
+//    }
 
 
     public Boolean goldWinningCondition() {
@@ -139,21 +150,15 @@ public class Board {
                 }
             }
             System.out.println("");
-            System.out.println("+-+-+-+-+-+-+-+-+-+-+-+-+");
+
         }
+        System.out.println("+-+-+-+-+-+-+-+-+-+-+-+-+");
         System.out.println("  +a+b+c+d+e+f+g+h+i+j+k+");
 
     }
-    public static void main(String[] args) {
-        Board board= new Board();
-        board.initialize();
-
-        Pair output=board.gameTree_2(board, true, 2, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null);
-        System.out.println(output.getPath());
-    }
-
 
     static int evaluate(Board board) {
+
         int boardRating = 0;
         for (int i = 0; i < board.BOARD_DIM; ++i) {
             for (int j = 0; j < board.BOARD_DIM; ++j) {
@@ -161,97 +166,24 @@ public class Board {
                 if (ship == null) {
                     continue;
                 }
+                if (board.getPosition(i,j) instanceof FlagShip) {
+                    boardRating+=((FlagShip) board.getPosition(i,j)).maximizeDistanceFromMiddle(i,j);
+                }
                 if (ship.getTeam()) {
-                    boardRating += ship.value();
+                    boardRating += ship.value()+ship.positionValue(i,j);
                 } else {
-                    boardRating -= ship.value();
+                    boardRating -= ship.value()-ship.positionValue(i,j);
                 }
             }
         }
         return boardRating;
+
+    }
+    public int RewardForProximityToFlag (int i, int j){
+        int
     }
 
-    public Pair gameTree_2(Board board, boolean team, int depth, int alpha, int beta, int currentWeight, Move lastMove) {
-        System.out.println(" team: " + team + " depth: " + depth + " alpha: " + alpha + " beta: " + beta + " current weight: " + currentWeight);
-        if (currentWeight == MAX_WEIGHT_PER_TURN) {
-            team = !team;
-            depth -= 1;
-            currentWeight = 0;
-            lastMove = null;
-        }
-
-        if (depth <= 0) {
-            //System.out.println("board evaluation score equals " + evaluate(board) + " at depth " + depth);
-            //return new Pair(evaluate(board), new ArrayList<>());
-            return new Pair(0, new ArrayList<>());
-        }
-
-        if (board.goldWinningCondition()) {
-            return new Pair(Integer.MAX_VALUE, new ArrayList<>());
-        }
 
 
-        if (board.silverWinningCondition()) {
-            return new Pair(Integer.MIN_VALUE, new ArrayList<>());
-        }
 
-
-        // Find ships of the current player
-        ArrayList<Move> path = new ArrayList<>();
-        Pair optimal = new Pair(team ? Integer.MIN_VALUE : Integer.MAX_VALUE, null);
-        PairTuple bestMove = null;
-
-        for (int i = 0; i < board.BOARD_DIM && alpha < beta; ++i) {
-            for (int j = 0; j < board.BOARD_DIM && alpha < beta; ++j) {
-                Ship srcShip = board.getPosition(i, j);
-
-                //skip if current ship was moved in previous iteration
-                if (lastMove != null && i == lastMove.getDstX() && j == lastMove.getDstY()) {
-                    continue;
-                }
-
-                // Verify that ship is owned by current player
-                if (srcShip != null && srcShip.getTeam() == team) {
-
-                    // Consider all possible moves of the current ship
-                    for (Move move : srcShip.generatePossibleMoves(board, i, j, MAX_WEIGHT_PER_TURN - currentWeight)) {
-                        if (move.getWeight() + currentWeight > MAX_WEIGHT_PER_TURN) {
-                            continue;
-                        }
-                        Ship dstShip = board.getPosition(move.getDstX(), move.getDstY());
-
-                        // Perform move
-                        board.setPosition(move.getDstX(), move.getDstY(), srcShip);
-                        board.setPosition(i, j, null);
-
-                        // Recursive call
-                        Pair gameTree = gameTree_2(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move);
-
-                        if (team && gameTree.getValue() >= optimal.getValue() || !team && gameTree.getValue() <= optimal.getValue()) {
-                            bestMove = new PairTuple(move, depth);
-                            optimal = gameTree;
-                        }
-                        // Undo move
-                        board.setPosition(i, j, srcShip);
-                        board.setPosition(move.getDstX(), move.getDstY(), dstShip);
-
-                        if (team) {
-                            alpha = Math.max(alpha, gameTree.getValue());
-                            //System.out.println("team " + team + " alpha " + alpha + " eval " + gameTree.getValue() + "beta " + beta);
-                        } else {
-                            beta = Math.min(beta, gameTree.getValue());
-                        }
-
-                        if (beta <= alpha) {
-                            break;
-                        }
-                    }
-
-                }
-            }
-        }
-
-        optimal.getPath().add(0, bestMove);
-        return (optimal);
-    }
 }
