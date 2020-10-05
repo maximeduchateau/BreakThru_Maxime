@@ -10,9 +10,9 @@ public class Game extends Subject {
         this.board = new Board();
     }
 
-    public void start() {
+    public void start(Boolean teamToStart) {
         board.initialize();
-        onTurn = true;
+        onTurn = teamToStart;
         notifyObservers(UpdateType.PLAYER_UPDATE);
     }
 
@@ -48,16 +48,16 @@ public class Game extends Subject {
             validMove = false;
         }
         if (validMove) {
-            // (board.getPosition(dstX, dstY) != null && numberOfMovesForTurn == 0)
-            if (board.getPosition(dstX, dstY) != null) {
+            if(board.getPosition(dstX, dstY) != null && numberOfMovesForTurn == 0){
                 moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, dstX, dstY, board);
             } else {
                 moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, dstX, dstY, board);
             }
-            numberOfMovesForTurn += moveEvaluation;
             if (moveEvaluation == -1) {
-                validMove = false;
+                return false;
             }
+            numberOfMovesForTurn += moveEvaluation;
+
         }
 
         return validMove;

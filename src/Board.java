@@ -6,7 +6,8 @@ public class Board {
     private Ship[][] board;
     private Boolean teamWon;
     public static final int MAX_WEIGHT_PER_TURN = 2;
-
+    private int flagX;
+    private int flagY;
 
     public Board() {
         this.board = new Ship[BOARD_DIM][BOARD_DIM];
@@ -106,23 +107,15 @@ public class Board {
 
     public Boolean goldWinningCondition() {
         for (int i = 0; i < BOARD_DIM; i++) {
-            if (board[i][BOARD_DIM - 1] != null && board[i][BOARD_DIM - 1] instanceof FlagShip) {
-                return true;
-            }
-            if (board[i][0] != null && board[i][0] instanceof FlagShip) {
-                return true;
-            }
-            if (board[BOARD_DIM - 1][i] != null && board[BOARD_DIM - 1][i] instanceof FlagShip) {
-                return true;
-            }
-            if (board[0][i] != null && board[0][i] instanceof FlagShip) {
+            if ((board[i][BOARD_DIM - 1] != null && board[i][BOARD_DIM - 1] instanceof FlagShip)
+            ||(board[i][0] != null && board[i][0] instanceof FlagShip)
+            ||(board[BOARD_DIM - 1][i] != null && board[BOARD_DIM - 1][i] instanceof FlagShip)
+            ||(board[0][i] != null && board[0][i] instanceof FlagShip)) {
                 return true;
             }
         }
-        {
             return false;
         }
-    }
 
     @Override
     public String toString() {
@@ -158,7 +151,7 @@ public class Board {
     }
 
     static int evaluate(Board board) {
-
+        board.getFlag();
         int boardRating = 0;
         for (int i = 0; i < board.BOARD_DIM; ++i) {
             for (int j = 0; j < board.BOARD_DIM; ++j) {
@@ -167,23 +160,29 @@ public class Board {
                     continue;
                 }
                 if (board.getPosition(i,j) instanceof FlagShip) {
-                    boardRating+=((FlagShip) board.getPosition(i,j)).maximizeDistanceFromMiddle(i,j);
+                    boardRating+=ship.positionValue(i,j)+ship.value()+((FlagShip) board.getPosition(i,j)).maximizeDistanceFromMiddle(i,j);
                 }
+                else{
                 if (ship.getTeam()) {
-                    boardRating += ship.value()+ship.positionValue(i,j);
+                    boardRating += ship.value()+0.5*ship.positionValue(i,j)+ 0.7*board.RewardForProximityToFlag(i,j);
                 } else {
-                    boardRating -= ship.value()-ship.positionValue(i,j);
+                    boardRating -= ship.value()+ship.positionValue(i,j)+board.RewardForProximityToFlag(i,j);
                 }
-            }
+            }}
         }
         return boardRating;
 
     }
     public int RewardForProximityToFlag (int i, int j){
-        int
+        return (int) (15*(11-Math.sqrt(Math.pow(i-flagX,2)+Math.pow(j-flagY,2))));
     }
 
-
-
-
-}
+    private void getFlag() {
+        for (int i = 0; i < BOARD_DIM; ++i) {
+            for (int j = 0; j < BOARD_DIM; ++j) {
+                if (board[i][j] instanceof FlagShip) {
+                    this.flagX=i;
+                    this.flagY=j;
+                }
+    }
+}}}

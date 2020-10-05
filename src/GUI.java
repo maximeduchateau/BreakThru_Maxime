@@ -17,35 +17,22 @@ public class GUI extends Observer {
         return team;
     }
     public void update(UpdateType updateType) {
-       printBoard(board);
+        //todo: hier even gecheckt of er niet al een winnaar is maar niet zeker of dat moet hier, nogal slordig, fix this
+        if (board.goldWinningCondition()){
+            System.out.println("GAME OVER GOLD WON");}
+        if (board.silverWinningCondition()){
+            System.out.println("GAME OVER SILVER WON");
+        }
+        if (!board.goldWinningCondition()&&!board.silverWinningCondition()){
+       board.printBoard(board);
         Boolean onTurn = game.getOnTurn();
         System.out.println("you are the " + getTeam()+ " player");
         System.out.println("player on turn" + onTurn);
         if (game.getOnTurn()==team){
         requestMove();}
-    }
+    }}
 
-    public void printBoard(Board board) {
 
-        System.out.println("+-+-+-+-+-+-+-+-+-+-+-+-+");
-        int row, column;
-        for (row = 0; row < Board.BOARD_DIM; row++) {
-            if (row<2) {System.out.print((11-row) +"|");}
-            else {
-                System.out.print(" "+ (11-row) +"|");}
-            for (column = 0; column < Board.BOARD_DIM; column++) {
-                //if there is no boat: empty position is printed
-                if (board.getPosition(row, column) == null) {
-                    System.out.print(" |");
-                } else {
-                    System.out.print(board.getPosition(row, column).toString() + "|");
-                }
-            }
-            System.out.println("");
-            System.out.println("+-+-+-+-+-+-+-+-+-+-+-+-+");}
-            System.out.println("  +a+b+c+d+e+f+g+h+i+j+k+");
-
-    }
 
     public void requestMove() {
         //geef coördinaten in van positie en gewenste zet
