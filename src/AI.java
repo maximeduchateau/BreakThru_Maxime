@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+
 public class AI extends Observer {
     private Board board;
     private BoardTest boardTest;
@@ -12,6 +13,15 @@ public class AI extends Observer {
     private int depth = 2;
     private long[][] zobrist = new long[121][3];
     private HashMap<Boolean, HashMap<Long, TTEntry>> transpositionTable;
+
+    //here we have the member variables
+    private static final int INITIAL_DEPTH = 5;
+    private static final int TIMEOUT_MILISECONDS = 6000;
+
+    private int currentDepth;
+
+    private long start;
+    private boolean timeout;
 
 
     public AI(Game game) {
@@ -33,7 +43,7 @@ public class AI extends Observer {
         if (updateType == UpdateType.PLAYER_UPDATE) {
             board.printBoard(board);
             if (game.getOnTurn() == team) {
-                ArrayList<PairTuple> path = (ArrayList<PairTuple>) gameTree_2(board, team, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null, null).getPath();
+                ArrayList<PairTuple> path = (ArrayList<PairTuple>) gameTree(board, team, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null, null).getPath();
                 //System.out.println(path);
                 int i = 0;
                 while (i < path.size()) {
@@ -59,7 +69,7 @@ public class AI extends Observer {
         }
     }
 
-    public Pair gameTree_2(Board board, boolean team, int depth, int alpha, int beta, int currentWeight, Move lastMove, Long key) {
+    public Pair gameTree(Board board, boolean team, int depth, int alpha, int beta, int currentWeight, Move lastMove, Long key) {
         if (key == null) {
             key = computeKey(board);
         }
@@ -121,7 +131,7 @@ public class AI extends Observer {
                         board.setPosition(i, j, null);
 
                         // Recursive call
-                        Pair gameTree = gameTree_2(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move, updatedKey);
+                        Pair gameTree = gameTree(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move, updatedKey);
                         TTEntry ttEntry = new TTEntry(gameTree.getValue(), alpha, beta, depth, gameTree.getPath());
                         transpositionTable.get(team).put(key, ttEntry);
 
