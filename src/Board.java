@@ -69,14 +69,11 @@ public class Board {
     }
 
     public void move(int srcX, int srcY, int dstX, int dstY) {
-        System.out.println("move is processed in movefunction of board class");
         this.board[dstX][dstY] = this.board[srcX][srcY];
-        System.out.println("ship reached destination");
         this.board[srcX][srcY] = null;
-        System.out.println("old source position is empty");
         if (silverWinningCondition() || goldWinningCondition()) {
             System.out.println("!!!!!!!GAME OVER!!!!!!!!");
-            // teamWon = board[dstX][dstY].getTeam();
+            //teamWon = board[dstX][dstY].getTeam();
         }
     }
 
@@ -164,7 +161,7 @@ public class Board {
                 }
                 else{
                 if (ship.getTeam()) {
-                    boardRating += ship.value()+0.5*ship.positionValue(i,j)+ 0.7*board.RewardForProximityToFlag(i,j);
+                    boardRating += ship.value()+0.5*ship.positionValue(i,j)+ 0.6*board.RewardForProximityToFlag(i,j);
                 } else {
                     boardRating -= ship.value()+ship.positionValue(i,j)+board.RewardForProximityToFlag(i,j);
                 }
@@ -174,7 +171,7 @@ public class Board {
 
     }
     public int RewardForProximityToFlag (int i, int j){
-        return (int) (15*(11-Math.sqrt(Math.pow(i-flagX,2)+Math.pow(j-flagY,2))));
+        return (int) (15*(10-Math.sqrt(Math.pow(i-flagX,2)+Math.pow(j-flagY,2))));
     }
 
     private void getFlag() {

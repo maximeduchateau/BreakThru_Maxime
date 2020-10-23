@@ -32,7 +32,7 @@ public class FlagShip extends Ship {
     }
 
 public int value(){
-        return 1000;
+        return 1100;
 }
     public int positionValue(int row, int column) {
         int[][] positionValue =

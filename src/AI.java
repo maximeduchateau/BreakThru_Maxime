@@ -25,32 +25,6 @@ public class AI extends Observer {
 
     }
 
-//    public static void main(String[] args) {
-//        Game game = new Game();
-//        AI aii = new AI(game);
-//        Board board=new Board();
-//        BoardTest boardTest= new BoardTest();
-//        board.initialize();
-//        boardTest.initialize();
-//        long key= aii.computeKey(board);
-//        long key2= aii.computeKey(boardTest);
-//        Move move =new Move(9,7,10,7,1);
-//        Move move2= new Move(9,6,10,6,1);
-//        long keyupdated = aii.updateKey(key,move,board);
-//        long keyupdated2= aii.updateKey(keyupdated,move2,board);
-//        board.move(9,7,10,7);
-//        board.move(9,6,10,6);
-//
-//        System.out.println(key);
-//        board.printBoard(board);
-//        boardTest.printBoard(boardTest);
-//        System.out.println(key2);
-//        System.out.println(keyupdated);
-//        System.out.println(keyupdated2);
-//
-//
-//    }
-
     public void setTeam(Boolean team) {
         this.team = team;
     }
@@ -58,10 +32,10 @@ public class AI extends Observer {
 
     public void update(UpdateType updateType) {
         if (updateType == UpdateType.PLAYER_UPDATE) {
-
+            board.printBoard(board);
             if (game.getOnTurn() == team) {
                 ArrayList<PairTuple> path = (ArrayList<PairTuple>) gameTree_2(board, team, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null,null).getPath();
-                System.out.println(path);
+                //System.out.println(path);
                 int i = 0;
                 while (i < path.size()) {
 
@@ -69,10 +43,10 @@ public class AI extends Observer {
                     if (move.getDepth() != this.depth) {
                         break;
                     }
-                    System.out.println(path.toString());
+                    //System.out.println(path.toString());
                     game.processMove(move.getMove().getSrcX(), move.getMove().getSrcY(), move.getMove().getDstX(), move.getMove().getDstY());
                     ++i;
-                    board.printBoard(board);
+
                     //TODO: nu even hier game over geprint maar beter moet dit cleaner worden gedaan later
                     if (board.goldWinningCondition()){
                         System.out.println("GAME OVER GOLD WON");}
@@ -175,8 +149,6 @@ public class AI extends Observer {
                 }
             }
         }
-
-        //optimal.getPath().add(0, bestMove);
         Pair result = new Pair(optimal.getValue(), new ArrayList<>());
         result.getPath().addAll(optimal.getPath());
         result.getPath().add(0, bestMove);
@@ -244,48 +216,5 @@ public class AI extends Observer {
             }
         }
         return shipType;
-    }
-//    long computeKey(BoardTest board) {
-//        long hashKey = 0;
-//        for (int i = 0; i < board.BOARD_DIM; i++) {
-//            for (int j = 0; j < board.BOARD_DIM; j++) {
-//
-//                if (board.getPosition(i, j) == null) {
-//                    continue;
-//                }
-//                int shipType = getShipType(i, j, board);
-//
-//
-//                int position = i * 11 + j;
-//                //int turn = onTurn ? 0 : 1;
-//                hashKey ^= zobrist[position][shipType];
-//            }
-//        }
-//        return hashKey;
-//    }
-//
-//    public int getShipType(int x, int y, BoardTest board) {
-//        int shipType;
-//        if (board.getPosition(x, y).getTeam() == false) {
-//            shipType = 0;
-//        } else {
-//            shipType = 1;
-//            if (board.getPosition(x, y) instanceof FlagShip) {
-//                shipType = 2;
-//            }
-//        }
-//        return shipType;
-//    }
-}
-
-
-//todo:  DefensiveStrategy
-//    // IF gold: check if flagship is under threat: a silver piece on adjacent diagonal posiion
-//    // if silver check if gold can break through to the outer perimeter.
-
-//todo:OffensiveStrategy
-//    //silver ships: try to get in pasition to be able to cpature flagship (on diagonal, but with cover
-//    //gold: clear way trough silverfleet such that flagship can move through
-//todo://some board positions are more interesting than others: middle of board better than close to the edge
-//    //captures are more useful than moves unless it's a break trough
+    }}
 

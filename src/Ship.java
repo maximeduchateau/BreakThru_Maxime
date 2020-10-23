@@ -139,8 +139,8 @@ public class Ship {
     }
 
     public int value(){
-        if (this.team==true){return 150;}
-        else {return 100;}
+        if (this.team==true){return 300;}
+        else {return 200;}
     }
     public int positionValue(int row, int column) {
         int[][] positionValue =

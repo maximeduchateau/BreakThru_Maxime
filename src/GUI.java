@@ -17,18 +17,18 @@ public class GUI extends Observer {
         return team;
     }
     public void update(UpdateType updateType) {
-        //todo: hier even gecheckt of er niet al een winnaar is maar niet zeker of dat moet hier, nogal slordig, fix this
+        //todo: hier even gecheckt of er niet al een winnaar is maar niet zeker of dat moet hier, nogal slordig
         if (board.goldWinningCondition()){
             System.out.println("GAME OVER GOLD WON");}
         if (board.silverWinningCondition()){
             System.out.println("GAME OVER SILVER WON");
         }
         if (!board.goldWinningCondition()&&!board.silverWinningCondition()){
-       board.printBoard(board);
         Boolean onTurn = game.getOnTurn();
         System.out.println("you are the " + getTeam()+ " player");
         System.out.println("player on turn" + onTurn);
         if (game.getOnTurn()==team){
+            board.printBoard(board);
         requestMove();}
     }}
 
