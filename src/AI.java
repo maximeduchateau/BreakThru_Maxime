@@ -14,7 +14,6 @@ public class AI extends Observer {
     private HashMap<Boolean, HashMap<Long, TTEntry>> transpositionTable;
 
 
-
     public AI(Game game) {
         this.board = game.getBoard();
         this.game = game;
@@ -34,7 +33,7 @@ public class AI extends Observer {
         if (updateType == UpdateType.PLAYER_UPDATE) {
             board.printBoard(board);
             if (game.getOnTurn() == team) {
-                ArrayList<PairTuple> path = (ArrayList<PairTuple>) gameTree_2(board, team, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null,null).getPath();
+                ArrayList<PairTuple> path = (ArrayList<PairTuple>) gameTree_2(board, team, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null, null).getPath();
                 //System.out.println(path);
                 int i = 0;
                 while (i < path.size()) {
@@ -48,9 +47,10 @@ public class AI extends Observer {
                     ++i;
 
                     //TODO: nu even hier game over geprint maar beter moet dit cleaner worden gedaan later
-                    if (board.goldWinningCondition()){
-                        System.out.println("GAME OVER GOLD WON");}
-                    if (board.silverWinningCondition()){
+                    if (board.goldWinningCondition()) {
+                        System.out.println("GAME OVER GOLD WON");
+                    }
+                    if (board.silverWinningCondition()) {
                         System.out.println("GAME OVER SILVER WON");
                     }
                 }
@@ -60,8 +60,9 @@ public class AI extends Observer {
     }
 
     public Pair gameTree_2(Board board, boolean team, int depth, int alpha, int beta, int currentWeight, Move lastMove, Long key) {
-        if (key==null){
-        key= computeKey(board);}
+        if (key == null) {
+            key = computeKey(board);
+        }
         if (currentWeight == Board.MAX_WEIGHT_PER_TURN) {
             team = !team;
             depth -= 1;
@@ -72,14 +73,12 @@ public class AI extends Observer {
             if (transpositionTable.get(team).containsKey(key)) {
                 TTEntry entry = transpositionTable.get(team).get(key);
                 //todo: check depth
-                if (entry.getDepth() >= depth) {
+                if (entry.getDepth() >= depth && entry.getAlpha() <= alpha && entry.getBeta() >= beta) {
                     return new Pair(entry.getValue(), entry.getPath());
                 }
             }
         }
         if (depth <= 0) {
-            //System.out.println("board evaluation score equals " + evaluate(board) + " at depth " + depth);
-            //return new Pair(evaluate(board), new ArrayList<>());
             return new Pair(board.evaluate(board), new ArrayList<>());
         }
 
@@ -116,14 +115,14 @@ public class AI extends Observer {
                             continue;
                         }
                         Ship dstShip = board.getPosition(move.getDstX(), move.getDstY());
-                        long updatedKey=updateKey(key,move,board);
+                        long updatedKey = updateKey(key, move, board);
                         // Perform move
                         board.setPosition(move.getDstX(), move.getDstY(), srcShip);
                         board.setPosition(i, j, null);
 
                         // Recursive call
-                        Pair gameTree = gameTree_2(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move,updatedKey);
-                        TTEntry ttEntry= new TTEntry(gameTree.getValue(),alpha,beta,depth,gameTree.getPath());
+                        Pair gameTree = gameTree_2(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move, updatedKey);
+                        TTEntry ttEntry = new TTEntry(gameTree.getValue(), alpha, beta, depth, gameTree.getPath());
                         transpositionTable.get(team).put(key, ttEntry);
 
                         if (team && gameTree.getValue() >= optimal.getValue() || !team && gameTree.getValue() <= optimal.getValue()) {
@@ -207,7 +206,7 @@ public class AI extends Observer {
 
     public int getShipType(int x, int y, Board board) {
         int shipType;
-        if (board.getPosition(x,y)!=null && board.getPosition(x, y).getTeam() == false) {
+        if (board.getPosition(x, y) != null && board.getPosition(x, y).getTeam() == false) {
             shipType = 0;
         } else {
             shipType = 1;
@@ -216,5 +215,6 @@ public class AI extends Observer {
             }
         }
         return shipType;
-    }}
+    }
+}
 
