@@ -201,8 +201,8 @@ public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY, in
     return possibleMoves;
 }
     public int value(){
-        if (this.team==true){return 100;}
-        else {return 60;}
+        if (this.team==true){return 120;}
+        else {return 90;}
     }
 
 }

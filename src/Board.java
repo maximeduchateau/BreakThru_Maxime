@@ -172,15 +172,15 @@ public class Board {
                     continue;
                 }
                 if (board.getPosition(i,j) instanceof FlagShip) {
-                    boardRating+=1000+ 100* board.euclidDistance(i,j,5,5);
+                    boardRating+=ship.value()+ 100* board.euclidDistance(i,j,5,5);
                 }
 
                 else{
                 if (ship.getTeam()) {
-                    boardRating += 12* (10- board.euclidDistance(board.flagX, board.flagY,i,j));
+                    boardRating += ship.value()+5* (10- board.euclidDistance(board.flagX, board.flagY,i,j));
                             //+board.RewardForProximityToFlag(i,j);
                 } else {
-                    boardRating -= 10* (10- board.euclidDistance(board.flagX, board.flagY,i,j));
+                    boardRating -= ship.value()+ 5* (10- board.euclidDistance(board.flagX, board.flagY,i,j));
                             //+board.RewardForProximityToFlag(i,j);
                 }
             }}
