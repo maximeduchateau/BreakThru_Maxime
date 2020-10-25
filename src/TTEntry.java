@@ -37,4 +37,15 @@ public class TTEntry {
     public int getBeta() {
         return beta;
     }
+
+    @Override
+    public String toString() {
+        return "TTEntry{" +
+                "value=" + value +
+                ", alpha=" + alpha +
+                ", beta=" + beta +
+                ", depth=" + depth +
+                ", path=" + path +
+                '}';
+    }
 }

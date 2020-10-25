@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 public class AI extends Observer {
     private Board board;
-    private BoardTest boardTest;
     private Game game;
     static Scanner scan = new Scanner(System.in);
     private Boolean team;
@@ -14,14 +13,12 @@ public class AI extends Observer {
     private long[][] zobrist = new long[121][3];
     private HashMap<Boolean, HashMap<Long, TTEntry>> transpositionTable;
 
-    //here we have the member variables
-    private static final int INITIAL_DEPTH = 5;
-    private static final int TIMEOUT_MILISECONDS = 6000;
 
-    private int currentDepth;
 
-    private long start;
-    private boolean timeout;
+//    private static final int TIMEOUT_MILISECONDS = 100000;
+//
+//    private long start;
+//    private boolean timeout;
 
 
     public AI(Game game) {
@@ -43,8 +40,17 @@ public class AI extends Observer {
         if (updateType == UpdateType.PLAYER_UPDATE) {
             board.printBoard(board);
             if (game.getOnTurn() == team) {
-                ArrayList<PairTuple> path = (ArrayList<PairTuple>) gameTree(board, team, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null, null).getPath();
-                //System.out.println(path);
+//                timeout=false;
+//                start = System.currentTimeMillis();
+//                ArrayList<PairTuple> path = null;
+//                for (int extraDepth=0;!timeout;extraDepth++ ) {
+                //ArrayList<PairTuple> path = (ArrayList<PairTuple>) alphabetasearch(board, team, this.depth, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, null, null).getPath();
+                ArrayList<PairTuple> path = (ArrayList<PairTuple>) alphabetasearch(board, team, this.depth, -1000, 1000, 0, null, null).getPath();
+//                    if (System.currentTimeMillis()-start>TIMEOUT_MILISECONDS){
+//                        timeout=true;
+//                        System.out.println(extraDepth);
+//                    }
+//                }
                 int i = 0;
                 while (i < path.size()) {
 
@@ -52,7 +58,7 @@ public class AI extends Observer {
                     if (move.getDepth() != this.depth) {
                         break;
                     }
-                    //System.out.println(path.toString());
+                    System.out.println(path.toString());
                     game.processMove(move.getMove().getSrcX(), move.getMove().getSrcY(), move.getMove().getDstX(), move.getMove().getDstY());
                     ++i;
 
@@ -69,7 +75,7 @@ public class AI extends Observer {
         }
     }
 
-    public Pair gameTree(Board board, boolean team, int depth, int alpha, int beta, int currentWeight, Move lastMove, Long key) {
+    public Pair alphabetasearch(Board board, boolean team, int depth, int alpha, int beta, int currentWeight, Move lastMove, Long key) {
         if (key == null) {
             key = computeKey(board);
         }
@@ -83,28 +89,23 @@ public class AI extends Observer {
             if (transpositionTable.get(team).containsKey(key)) {
                 TTEntry entry = transpositionTable.get(team).get(key);
                 //todo: check depth
-                if (entry.getDepth() >= depth && entry.getAlpha() <= alpha && entry.getBeta() >= beta) {
+                if (entry.getDepth() >= depth && entry.getAlpha() <= alpha+1 && entry.getBeta() >= beta-1) {
+                   // System.out.println("tt used with: beta "+beta +"alpha "+alpha+ "beta of TT "+ entry.getBeta()+ "alpha of TT" +entry.getAlpha());
                     return new Pair(entry.getValue(), entry.getPath());
                 }
+//                if (entry.getDepth() >= depth){
+//                    System.out.println("tt NOT USED BOUNDS: beta :"+beta +"alpha: "+alpha+ "beta of TT :"+ entry.getBeta()+ "alpha of TT : " +entry.getAlpha());
+//                }
             }
         }
-        if (depth <= 0) {
-            return new Pair(board.evaluate(board), new ArrayList<>());
-        }
-
-        if (board.goldWinningCondition()) {
-            return new Pair(Integer.MAX_VALUE, new ArrayList<>());
-        }
-
-
-        if (board.silverWinningCondition()) {
-            return new Pair(Integer.MIN_VALUE, new ArrayList<>());
+        if (depth <= 0 || board.silverWinningCondition() || board.goldWinningCondition()) {
+            return new Pair(board.evaluate(board,team), new ArrayList<>());
         }
 
 
         // Find ships of the current player
         ArrayList<Move> path = new ArrayList<>();
-        Pair optimal = new Pair(team ? Integer.MIN_VALUE : Integer.MAX_VALUE, null);
+        Pair optimal = new Pair(team ? -1000 : 1000, null);
         PairTuple bestMove = null;
 
         for (int i = 0; i < board.BOARD_DIM && alpha < beta; ++i) {
@@ -126,12 +127,12 @@ public class AI extends Observer {
                         }
                         Ship dstShip = board.getPosition(move.getDstX(), move.getDstY());
                         long updatedKey = updateKey(key, move, board);
-                        // Perform move
+                        //Perform move
                         board.setPosition(move.getDstX(), move.getDstY(), srcShip);
                         board.setPosition(i, j, null);
 
                         // Recursive call
-                        Pair gameTree = gameTree(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move, updatedKey);
+                        Pair gameTree = alphabetasearch(board, team, depth, alpha, beta, currentWeight + move.getWeight(), move, updatedKey);
                         TTEntry ttEntry = new TTEntry(gameTree.getValue(), alpha, beta, depth, gameTree.getPath());
                         transpositionTable.get(team).put(key, ttEntry);
 
@@ -161,6 +162,7 @@ public class AI extends Observer {
         Pair result = new Pair(optimal.getValue(), new ArrayList<>());
         result.getPath().addAll(optimal.getPath());
         result.getPath().add(0, bestMove);
+        System.out.println("evaluationvalue of best "+optimal.getValue());
         return result;
     }
 

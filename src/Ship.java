@@ -118,45 +118,92 @@ public class Ship {
         }
     }
 
-    public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY, int maxWeight) {
-        ArrayList<Move> possibleMoves = new ArrayList<>();
-        int moveEvaluation;
-        for (int i = 0; i < board.BOARD_DIM; ++i) {
-            for (int j = 0; j < board.BOARD_DIM; ++j) {
-                if (!(srcX == i && srcY == j)) {
-                    if (board.getPosition(i, j) != null && maxWeight==2) {
-                        moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, i, j, board);
-                    } else {
-                        moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, i, j, board);
-                    }
-                    if (moveEvaluation > 0) {
-                        possibleMoves.add(new Move(srcX, srcY, i, j, moveEvaluation));
-                    }
+//    public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY, int maxWeight) {
+//        ArrayList<Move> possibleMoves = new ArrayList<>();
+//        int moveEvaluation;
+//        for (int i = 0; i < board.BOARD_DIM; ++i) {
+//            for (int j = 0; j < board.BOARD_DIM; ++j) {
+//                if (!(srcX == i && srcY == j)) {
+//                    if (board.getPosition(i, j) != null && maxWeight==2) {
+//                        moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, i, j, board);
+//                    } else {
+//                        moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, i, j, board);
+//                    }
+//                    if (moveEvaluation > 0) {
+//                        possibleMoves.add(new Move(srcX, srcY, i, j, moveEvaluation));
+//                    }
+//                }
+//            }
+//        }
+//        return possibleMoves;
+//    }
+public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY, int maxWeight) {
+    ArrayList<Move> possibleMoves = new ArrayList<>();
+    int moveEvaluation;
+    if (srcX+1<=10 && srcY+1<=10){
+        if (board.getPosition(srcX+1,srcY+1) != null && maxWeight==2) {
+            moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, srcX+1, srcY+1, board);
+            if (moveEvaluation > 0) {
+                possibleMoves.add(new Move(srcX, srcY, srcX+1, srcY+1, moveEvaluation));
+    }}}
+        if (srcX-1>=0 && srcY+1<=10){
+            if (board.getPosition(srcX-1,srcY+1) != null && maxWeight==2) {
+                moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, srcX-1, srcY+1, board);
+                if (moveEvaluation > 0) {
+                    possibleMoves.add(new Move(srcX, srcY, srcX-1, srcY+1, moveEvaluation));
+                }}}
+    if (srcX+1<=10 && srcY-1>=0){
+        if (board.getPosition(srcX+1,srcY-1) != null && maxWeight==2) {
+            moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, srcX+1, srcY-1, board);
+            if (moveEvaluation > 0) {
+                possibleMoves.add(new Move(srcX, srcY, srcX+1, srcY-1, moveEvaluation));
+            }}}
+    if (srcX-1>=0 && srcY-1>=0){
+        if (board.getPosition(srcX-1,srcY-1) != null && maxWeight==2) {
+            moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, srcX-1, srcY-1, board);
+            if (moveEvaluation > 0) {
+                possibleMoves.add(new Move(srcX, srcY, srcX-1, srcY-1, moveEvaluation));
+            }}}
+
+    for (int i = 1; i < board.BOARD_DIM; ++i) {
+        if( srcX+i<=10 && board.getPosition(srcX+i,srcY)==null){
+                    moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, srcX+i, srcY, board);
+                if (moveEvaluation > 0) {
+                    possibleMoves.add(new Move(srcX, srcY,srcX+i, srcY, moveEvaluation));
                 }
-            }
+            }else {break;}
         }
-        return possibleMoves;
+    for (int i = 1; i < board.BOARD_DIM; ++i) {
+        if( srcY+i<=10 && board.getPosition(srcX,srcY+i)==null){
+            moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, srcX, srcY+i, board);
+            if (moveEvaluation > 0) {
+                possibleMoves.add(new Move(srcX, srcY,srcX, srcY+i, moveEvaluation));
+            }
+        }else{break;}
+    }
+    for (int i = 1; i < board.BOARD_DIM; ++i) {
+        if( srcX-i>=0 && board.getPosition(srcX-i,srcY)==null){
+            moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, srcX-i, srcY, board);
+            if (moveEvaluation > 0) {
+                possibleMoves.add(new Move(srcX, srcY,srcX-i, srcY, moveEvaluation));
+            }
+        }else {break;}
+    }
+    for (int i = 1; i < board.BOARD_DIM; ++i) {
+        if( srcY-i>=0 && board.getPosition(srcX,srcY-i)==null){
+            moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, srcX, srcY-i, board);
+            if (moveEvaluation > 0) {
+                possibleMoves.add(new Move(srcX, srcY,srcX, srcY-i, moveEvaluation));
+            }
+        }else{break;}
     }
 
+    return possibleMoves;
+}
     public int value(){
-        if (this.team==true){return 300;}
-        else {return 200;}
+        if (this.team==true){return 100;}
+        else {return 60;}
     }
-    public int positionValue(int row, int column) {
-        int[][] positionValue =
-                {{-30, -30, -30, -30, -30, -30, -30, -30, -30, -30, -30},
-                        {-30, -30, -20, -20, -20, -20, -20, -20, -20, -30, -30},
-                        {-30, -20, -10, -10, -10, -10, -10, -10, -10, -20, -30},
-                        {-30, -20, -10, -5, 0, 0, 0, -5, -10, -20, -30},
-                        {-30, -20, -10, -5, 0, 0, 0, -5, -10, -20, -30},
-                        {-30, -20, -10, 0, 0, 0, 0, 0, -10, -20, -30},
-                        {-30, -20, -10, 0, 0, 0, 0, 0, -10, -20, -30},
-                        {-30, -20, -10, -5, 0, 0, 0, -5, -10, -20, -30},
-                        {-30, -20, -10, -10, -10, -10, -10, -10, -10, -20, -30},
-                        {-30, -30, -20, -20, -20, -20, -20, -20, -20, -30, -30},
-                        {-30, -30, -30, -30, -30, -30, -30, -30, -30, -30, -30}};
 
-        return positionValue[row][column];
-    }
 }
 

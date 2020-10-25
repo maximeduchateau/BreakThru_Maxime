@@ -32,29 +32,9 @@ public class FlagShip extends Ship {
     }
 
 public int value(){
-        return 1100;
+        return 1000;
 }
-    public int positionValue(int row, int column) {
-        int[][] positionValue =
-                {{1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,1000, 1000, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000},
-                        {1000, 1000, 1000, 1000, 1000, 1000, 1000,1000, 1000, 1000, 1000}};
-
-        return positionValue[row][column];
-    }
 
 
-    public int maximizeDistanceFromMiddle(int row,int column) {
-
-            return (int) (30*Math.pow(row-5, 2)+30*Math.pow(column-5,2));
-        }
 
 }
