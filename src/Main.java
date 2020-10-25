@@ -9,15 +9,19 @@ static Scanner scan=new Scanner(System.in);
         game.attach(ai);
 
 
-        //if we play with coinflip
+//      //A: if we play with coinflip
+
         //coinflip(gui, ai);
 
-        //if AI is golden team
+        //B: if AI is golden team
+
         System.out.println("ai plays gold (true), you play silver (false)");
         gui.setTeam(false);
         ai.setTeam(true);
 game.start(true);}
-//        if AI is silver team
+
+
+//        //C: if AI is silver team
 //
 //        System.out.println("ai plays silver (false), you play gold (true)");
 //        gui.setTeam(true);
@@ -26,6 +30,7 @@ game.start(true);}
 //        if (scan.nextLine().equals("yes")){
 //        game.start(false);}
 //        else {game.start(true);}}
+
 
 //    static void coinflip(GUI gui, AI ai){
 //        double coinFlip=Math.random();
