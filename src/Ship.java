@@ -118,25 +118,6 @@ public class Ship {
         }
     }
 
-//    public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY, int maxWeight) {
-//        ArrayList<Move> possibleMoves = new ArrayList<>();
-//        int moveEvaluation;
-//        for (int i = 0; i < board.BOARD_DIM; ++i) {
-//            for (int j = 0; j < board.BOARD_DIM; ++j) {
-//                if (!(srcX == i && srcY == j)) {
-//                    if (board.getPosition(i, j) != null && maxWeight==2) {
-//                        moveEvaluation = board.getPosition(srcX, srcY).isValidCapture(srcX, srcY, i, j, board);
-//                    } else {
-//                        moveEvaluation = board.getPosition(srcX, srcY).isValidMove(srcX, srcY, i, j, board);
-//                    }
-//                    if (moveEvaluation > 0) {
-//                        possibleMoves.add(new Move(srcX, srcY, i, j, moveEvaluation));
-//                    }
-//                }
-//            }
-//        }
-//        return possibleMoves;
-//    }
 public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY, int maxWeight) {
     ArrayList<Move> possibleMoves = new ArrayList<>();
     int moveEvaluation;
@@ -201,8 +182,8 @@ public ArrayList<Move> generatePossibleMoves(Board board, int srcX, int srcY, in
     return possibleMoves;
 }
     public int value(){
-        if (this.team==true){return 120;}
-        else {return 90;}
+        if (this.team){return 170;}
+        else {return 130;}
     }
 
 }

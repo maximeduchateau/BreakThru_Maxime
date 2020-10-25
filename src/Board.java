@@ -75,7 +75,6 @@ public class Board {
         this.board[srcX][srcY] = null;
         if (silverWinningCondition() || goldWinningCondition()) {
             System.out.println("!!!!!!!GAME OVER!!!!!!!!");
-            //teamWon = board[dstX][dstY].getTeam();
         }
     }
 
@@ -89,20 +88,6 @@ public class Board {
         }
         return true;
     }
-//    public Boolean draw() {
-//        int counter=0;
-//        for (int i = 0; i < BOARD_DIM; ++i) {
-//            for (int j = 0; j < BOARD_DIM; ++j) {
-//                if (board[i][j] != null && board[i][j].getTeam()) {
-//                    ++counter;
-//                    if (counter>1){
-//                        return false;}
-//                }
-//            }
-//        }
-//        return true;
-//    }
-
 
     public Boolean goldWinningCondition() {
         for (int i = 0; i < BOARD_DIM; i++) {
@@ -151,19 +136,18 @@ public class Board {
     private double euclidDistance(int srcX, int srcY, int dstX, int dstY){
         return Math.sqrt((Math.pow(srcX-dstX,2)+Math.pow(srcY-dstY,2)));
     }
-
+    // evaluation function is called by the AI, to evaluate
     static int evaluate(Board board, Boolean team) {
         board.getFlag();
-        int boardRating = -1000;
+        int boardRating = -50;
 
         if (board.goldWinningCondition()) {
-            return 1000;
-           // return (Integer.MAX_VALUE);
+            return (Integer.MAX_VALUE);
         }
 
         if (board.silverWinningCondition()) {
-            return -1000;
-            //return (Integer.MIN_VALUE);
+
+            return (Integer.MIN_VALUE);
         }
         for (int i = 0; i < board.BOARD_DIM; ++i) {
             for (int j = 0; j < board.BOARD_DIM; ++j) {
@@ -171,31 +155,35 @@ public class Board {
                 if (ship == null) {
                     continue;
                 }
+                //for flagship: reward distance from center
                 if (board.getPosition(i,j) instanceof FlagShip) {
-                    boardRating+=ship.value()+ 100* board.euclidDistance(i,j,5,5);
+                    boardRating+=ship.value()+ 5* (int) Math.pow(board.euclidDistance(i,j,5,5),4);
                 }
 
                 else{
+                    // for other ships: reward proximity to flagship
                 if (ship.getTeam()) {
-                    boardRating += ship.value()+5* (10- board.euclidDistance(board.flagX, board.flagY,i,j));
-                            //+board.RewardForProximityToFlag(i,j);
+                    boardRating += ship.value()+ (10- board.euclidDistance(board.flagX, board.flagY,i,j));
+
                 } else {
-                    boardRating -= ship.value()+ 5* (10- board.euclidDistance(board.flagX, board.flagY,i,j));
-                            //+board.RewardForProximityToFlag(i,j);
+                    boardRating -= ship.value()+ 4* (10- board.euclidDistance(board.flagX, board.flagY,i,j));
+
                 }
             }}
         }
+        //make up for the odd/even effect
+
+        boardRating+= team? -10: 10;
+
+        // add random factor
+
         boardRating+= (int) 0.05* (boardRating*(Math.random()-0.5));
 
-        boardRating+= team? -8: 8;
+
         return boardRating;
 
     }
-//    public int RewardForProximityToFlag (int i, int j){
-//        //System.out.println("reward for proximity: " +(int)(10-((Math.pow(i-flagX,2)+Math.pow(j-flagY,2)))));
-//        return (int) ((10-((Math.pow(i-flagX,2)+Math.pow(j-flagY,2)))));
-//
-//    }
+        // function to get the position of the flagship (for the evaluationfunction)
 
     private void getFlag() {
         for (int i = 0; i < BOARD_DIM; ++i) {

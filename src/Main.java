@@ -14,30 +14,32 @@ static Scanner scan=new Scanner(System.in);
         //coinflip(gui, ai);
 
         //B: if AI is golden team
-
-        System.out.println("ai plays gold (true), you play silver (false)");
-        gui.setTeam(false);
-        ai.setTeam(true);
-game.start(true);}
-
-
-//        //C: if AI is silver team
 //
-//        System.out.println("ai plays silver (false), you play gold (true)");
-//        gui.setTeam(true);
-//        ai.setTeam(false);
-//        System.out.println("Golden player, do you want to pass the first move: then write yes !");
-//        if (scan.nextLine().equals("yes")){
-//        game.start(false);}
-//        else {game.start(true);}}
+//        System.out.println("ai plays gold, you play silver");
+//        gui.setTeam(false);
+//        ai.setTeam(true);
+//game.start(true);}
 
+
+        //C: if AI is silver team
+
+        System.out.println("ai plays silver, you play gold");
+        gui.setTeam(true);
+        ai.setTeam(false);
+        System.out.println("Golden player, do you want to pass the first move: then write yes !");
+        if (scan.nextLine().equals("yes")){
+        game.start(false);}
+        else {game.start(true);}}
+
+
+        // coin flip randomly decides which player plays gold or silver.
 
 //    static void coinflip(GUI gui, AI ai){
 //        double coinFlip=Math.random();
 //        if (coinFlip>0.5){gui.setTeam(false); ai.setTeam(true);
-//            System.out.println("ai plays gold (true), you play silver (false)");}
+//            System.out.println("ai plays gold, you play silver");}
 //        else{gui.setTeam(true); ai.setTeam(false);
-//            System.out.println("ai plays silver (false), you play gold (true)");}
+//            System.out.println("ai plays silver, you play gold");}
 //
 //    }
 }

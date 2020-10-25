@@ -17,7 +17,6 @@ public class GUI extends Observer {
         return team;
     }
     public void update(UpdateType updateType) {
-        //todo: hier even gecheckt of er niet al een winnaar is maar niet zeker of dat moet hier, nogal slordig
         if (board.goldWinningCondition()){
             System.out.println("GAME OVER GOLD WON");}
         if (board.silverWinningCondition()){
@@ -25,8 +24,9 @@ public class GUI extends Observer {
         }
         if (!board.goldWinningCondition()&&!board.silverWinningCondition()){
         Boolean onTurn = game.getOnTurn();
-        System.out.println("you are the " + getTeam()+ " player");
-        System.out.println("player on turn" + onTurn);
+        if (onTurn){System.out.println("Gold is on turn");}
+        else {
+            System.out.println("Silver is on turn");}
         if (game.getOnTurn()==team){
             board.printBoard(board);
         requestMove();}
@@ -44,12 +44,10 @@ public class GUI extends Observer {
         String dstCoordinates=scan.nextLine();
         int dstX = xCoordinate(dstCoordinates);
         int dstY = yCoordinate(dstCoordinates);
-
-
         game.processMove(srcX, srcY, dstX, dstY);
-
-
     }
+
+
     private Integer yCoordinate(String input){
        Integer y = null;
         String alphabet="abcdefghijk";
@@ -62,6 +60,7 @@ public class GUI extends Observer {
         }
         return y;
     }
+
     private Integer xCoordinate(String input){
         Integer x = board.BOARD_DIM- strToNumber(input.substring(1),0);
         return x;
